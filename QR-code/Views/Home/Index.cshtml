@@ -1,0 +1,130 @@
+﻿@{
+    Layout = null;
+}
+
+@model QrCodeGenerator.Models.QrCodeModel
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Генератор QR-кодов</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-qrcode"></i> Генератор QR-кодов</h1>
+            <p>Преобразуйте любой текст или ссылку в QR-код</p>
+        </div>
+
+        <div class="qr-generator-card">
+            <form method="post" asp-action="Generate" id="qrForm">
+                <div class="content-wrapper">
+                    <div class="input-section">
+                        <h2><i class="fas fa-keyboard"></i> Введите текст</h2>
+
+                        <div class="form-group">
+                            <label for="Text">Текст для кодирования:</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-font"></i>
+                                <textarea asp-for="Text" class="text-input" placeholder="Введите текст, ссылку или другую информацию для создания QR-кода..."></textarea>
+                            </div>
+                            <span asp-validation-for="Text" class="text-danger"></span>
+                        </div>
+
+                        <div class="instruction">
+                            <h4><i class="fas fa-lightbulb"></i> Что можно кодировать:</h4>
+                            <ul>
+                                <li>Веб-ссылки (https://example.com)</li>
+                                <li>Текстовые сообщения</li>
+                                <li>Контактную информацию</li>
+                                <li>Wi-Fi данные</li>
+                                <li>Номера телефонов</li>
+                            </ul>
+                        </div>
+
+                        <button type="submit" class="generate-btn">
+                            <i class="fas fa-bolt"></i> Сгенерировать QR-код
+                        </button>
+                    </div>
+
+                    <div class="output-section">
+                        <h2><i class="fas fa-qrcode"></i> Результат</h2>
+
+                        <div class="qr-output">
+                            @if (Model.QrCodeImage != null)
+                            {
+                                <div class="qr-image-container">
+                                    <img src="data:image/png;base64,@Convert.ToBase64String(Model.QrCodeImage)"
+                                         alt="QR Code" class="qr-image" id="qrImage">
+                                </div>
+
+                                <div class="actions">
+                                    <button type="button" class="print-btn" onclick="printQrCode()">
+                                        <i class="fas fa-print"></i> Печать
+                                    </button>
+                                    <button type="button" class="download-btn" onclick="downloadQrCode()">
+                                        <i class="fas fa-download"></i> Скачать
+                                    </button>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="empty-state">
+                                    <i class="fas fa-qrcode"></i>
+                                    <h3>QR-код появится здесь</h3>
+                                    <p>Введите текст слева и нажмите "Сгенерировать"</p>
+                                </div>
+
+                                <!-- Кнопки в неактивном состоянии, когда QR-кода нет -->
+                                <div class="actions">
+                                    <button type="button" class="print-btn" disabled>
+                                        <i class="fas fa-print"></i> Печать
+                                    </button>
+                                    <button type="button" class="download-btn" disabled>
+                                        <i class="fas fa-download"></i> Скачать
+                                    </button>
+                                </div>
+                            }
+                        </div>
+
+                        <div class="text-output">
+                            <h3><i class="fas fa-align-left"></i> Исходный текст</h3>
+                            <div class="text-edit-container">
+                                @if (!string.IsNullOrEmpty(Model.Text))
+                                {
+                                    <div class="text-display" id="textDisplay" onclick="enableTextEdit()">
+                                        @Model.Text
+                                    </div>
+                                    <textarea class="editable-text" id="textEdit" style="display:none;">@Model.Text</textarea>
+                                    <div id="editButtons" style="display:none;">
+                                        <button type="button" class="save-btn" onclick="saveText()">Сохранить</button>
+                                        <button type="button" class="cancel-btn" onclick="cancelEdit()">Отмена</button>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="text-display" style="color: #6c757d; font-style: italic;">
+                                        Текст появится здесь после генерации
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="footer">
+            <p>© @DateTime.Now.Year Генератор QR-кодов | Создано с ASP.NET Core MVC</p>
+        </div>
+    </div>
+
+    <!-- Подключаем внешние JS файлы -->
+    <script src="~/js/print-template.js"></script>
+    <script src="~/js/site.js"></script>
+</body>
+</html>
