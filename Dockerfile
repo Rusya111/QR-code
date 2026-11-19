@@ -10,9 +10,6 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
 COPY --from=build /app .
 
-# Устанавливаем библиотеки для System.Drawing.Common (чтобы твой QR-код работал на Linux)
-RUN apt-get update && apt-get install -y libgdiplus libc6-dev
-
 # Render требует, чтобы приложение слушало порт 8080 (или тот, что даст Render)
 ENV ASPNETCORE_URLS=http://+:8080
 EXPOSE 8080
