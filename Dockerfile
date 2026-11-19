@@ -3,7 +3,7 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 COPY . .
 # Публикуем проект. Имя проекта берем из твоего csproj (QR-code.csproj)
-RUN dotnet publish QR-code.csproj -c Release -o /app
+RUN dotnet publish QR-code/QR-code.csproj -c Release -o /app
 
 # 2. Этап запуска (Runtime .NET 8)
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
